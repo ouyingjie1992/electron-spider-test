@@ -1,26 +1,28 @@
 {
-  "name": "electron-quick-start",
-  "version": "1.0.0",
-  "description": "A minimal Electron application",
-  "main": "main.js",
-  "scripts": {
-    "start": "electron ."
-  },
-  "repository": "https://github.com/electron/electron-quick-start",
-  "keywords": [
-    "Electron",
-    "quick",
-    "start",
-    "tutorial",
-    "demo"
-  ],
-  "author": "GitHub",
-  "license": "CC0-1.0",
-  "devDependencies": {
-    "electron": "^8.2.3"
-  },
-  "dependencies": {
-    "axios": "^0.19.2",
-    "request": "^2.88.2"
-  }
+    "name": "electron-quick-start",
+    "version": "1.0.0",
+    "description": "A minimal Electron application",
+    "main": "main.js",
+    "scripts": {
+        "start": "electron .",
+        "packager-windows": "electron-packager . meituan-app --platform=win32  --arch=x64 --out=./dist/ --asar",
+        "packager-mac": "electron-packager . meituan-app --platform=darwin --arch=x64 --out=./dist/ --asar"
+    },
+    "repository": "https://github.com/ouyingjie1992",
+    "keywords": [
+        "Electron",
+        "quick",
+        "start",
+        "tutorial",
+        "demo"
+    ],
+    "author": "<ouyingjie1992@qq.com>",
+    "license": "CC0-1.0",
+    "devDependencies": {
+        "electron": "^8.2.3"
+    },
+    "dependencies": {
+        "axios": "^0.19.2",
+        "request": "^2.88.2"
+    }
 }

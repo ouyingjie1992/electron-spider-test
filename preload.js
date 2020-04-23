@@ -39,13 +39,13 @@ xhrProxy.addHandler(function (xhr) {
     let data = '';
     let type = '';
 	if(url.indexOf('poi/food') !== -1) {
-        type = 'foodlist';
+        type = 'foodList';
         data = xhr.responseText;
     } else if(url.indexOf('search/poi') !== -1) {
-        type = 'searchlist';
+        type = 'searchList';
         data = xhr.responseText;
     } else if(url.indexOf('channel/kingkongshoplist') !== -1) {
-        type = 'shoplist';
+        type = 'shopList';
         data = xhr.responseText;
     }
     if(type!=='' && data!=='') {

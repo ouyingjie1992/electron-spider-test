@@ -1,21 +1,25 @@
 (() => {
-    const {dialog} = window.nodeRequire("electron").remote;
-    const fs = window.nodeRequire("fs");
-    const path = window.nodeRequire("path");
-    const request = window.nodeRequire('request');
+    const {dialog} = require("electron").remote;
+    const fs = require("fs");
+    const path = require("path");
+    const request = require('request');
     const webview = document.getElementById("chrome-content-01");
     // preload
-    const preloadFile = "file://" + window.nodeRequire("path").resolve("preload.js");
+    // const preloadFile = "file://" + path.resolve("preload.js");
     let resData = { //接口数据
-        foodlist: [],
-        searchlist: [],
-        shoplist: [],
+        foodList: [],
+        searchList: [],
+        shopList: [],
     }; //已下载数据
     let woffPath = '';
     // 是否已经下载woff
     let hasWoff = false;
     
-    webview.setAttribute("preload", preloadFile);
+    // webview.addEventListener("dom-ready", function(){
+    //     webview.openDevTools() // 这里！ 打开 webview的控制台
+    // });
+    
+    // webview.setAttribute("preload", preloadFile);
     webview.addEventListener("ipc-message", (event) => {
         //ipc-message监听，被webview加载页面传来的信息
         // console.log(event.channel); //最终收到消息输出   子页面信息
@@ -28,9 +32,7 @@
             woffPath = res.data || '';
         }
     });
-    // webview.addEventListener("dom-ready", function(){
-    //     webview.openDevTools() // 这里！ 打开 webview的控制台
-    // });
+
     const loadstart = () => {
         document.getElementById('loading').style.display = 'inline-block';
     }
@@ -84,23 +86,24 @@
     const downWoff = () => {
         if(woffPath== null || woffPath==='') {
             alert('woff文件存储失败，请重试，或者重启程序');
+        } else {
+            window.open(woffPath);
         }
-        window.open(woffPath);
     };
 
     // 更新已下载数据信息
     const updateData = (data) => {
-        if (data.type === 'foodlist') {
-            resData.foodlist.push(data.data);
-        } else if (data.type === 'searchlist') {
-            resData.searchlist.push(data.data);
-        } else if (data.type === 'shoplist') {
-            resData.shoplist.push(data.data);
+        if (data.type === 'foodList') {
+            resData.foodList.push(data.data);
+        } else if (data.type === 'searchList') {
+            resData.searchList.push(data.data);
+        } else if (data.type === 'shopList') {
+            resData.shopList.push(data.data);
         }
 
-        document.getElementById("shoplistLength").innerHTML = resData.shoplist.length;
-        document.getElementById("foodlistLength").innerHTML = resData.foodlist.length;
-        document.getElementById("searchlistLength").innerHTML = resData.searchlist.length;
+        document.getElementById("shopListLength").innerHTML = resData.shopList.length;
+        document.getElementById("foodListLength").innerHTML = resData.foodList.length;
+        document.getElementById("searchListLength").innerHTML = resData.searchList.length;
     };
 
     const backPage = () => {
@@ -169,19 +172,19 @@
             return false;
         }
         let outPath = filePath;
-        if (data.type === "foodlist") {
-            outPath += "/foodlist";
-        } else if (data.type === "searchlist") {
-            outPath += "/searchlist";
-        } else if (data.type === "shoplist") {
-            outPath += "/shoplist";
+        if (data.type === "foodList") {
+            outPath = path.join(outPath,'foodList');
+        } else if (data.type === "searchList") {
+            outPath = path.join(outPath,'searchList');
+        } else if (data.type === "shopList") {
+            outPath = path.join(outPath,'shopList');
         }
         await dirExists(outPath);
 
         let nowDate = new Date();
         nowDate = nowDate.getTime();
         // 写入json文件
-        outPath = `${outPath}/${nowDate}.json`;
+        outPath = path.join(outPath,`${nowDate}.json`);
         let outPathReal = path.resolve(outPath);
         fs.writeFile(outPathReal, data.data, {}, (err, resData) => {
             if (err) {
