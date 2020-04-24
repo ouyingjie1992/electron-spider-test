@@ -3,6 +3,7 @@
     const fs = require("fs");
     const path = require("path");
     const request = require('request');
+    const axios = require('axios');
     const webview = document.getElementById("chrome-content-01");
     // preload
     // const preloadFile = "file://" + path.resolve("preload.js");
@@ -19,6 +20,8 @@
     //     webview.openDevTools() // 这里！ 打开 webview的控制台
     // });
     
+    axios.defaults.withCredentials = true; //请求头跨域
+
     // webview.setAttribute("preload", preloadFile);
     webview.addEventListener("ipc-message", (event) => {
         //ipc-message监听，被webview加载页面传来的信息
@@ -33,21 +36,38 @@
         }
     });
 
-    const loadstart = () => {
-        document.getElementById('loading').style.display = 'inline-block';
-    }
+    const loading = {
+        ele: null,
+        init: () => {
+            this.ele = document.getElementById('loading');
+        },
+        show: () => {
+            if(!this.ele) {
+                return false;
+            }
+            this.ele.style.display = 'inline-block';
+        },
+        hide: () => {
+            if(!this.ele) {
+                return false;
+            }
+            this.ele.style.display = 'none';
+        }
+    };
+    loading.init();
 
-    const loadstop = () => {
-        document.getElementById('loading').style.display = 'none';
-    }
 
-    webview.addEventListener('did-start-loading', loadstart)
-    webview.addEventListener('did-stop-loading', loadstop)
+    webview.addEventListener('did-start-loading', loading.show())
+    webview.addEventListener('did-stop-loading', loading.hide())
 
     // 设置存储路径
     let filePath = ""; //接口数据
     const setPath = async () => {
-        dialog.showOpenDialog({properties: ["openDirectory"]}).then(async (files) => {
+        if(hasWoff && webview.style.display === 'inline-flex') {
+            alert('不可重复设置存储路径，若需换路径请重启程序后重新爬取');
+            return false;
+        }
+        dialog.showOpenDialog({properties: ['openDirectory', 'createDirectory']}).then(async (files) => {
             if (files.filePaths.length > 0) {
                 // 如果有选中
                 filePath = files.filePaths[0];
@@ -196,6 +216,40 @@
     };
 
 
+    // 选择Excel存储路径
+    const selectFile = () => {
+        alert('请选择数据包所在路径，解析成功后会在此路径下生成‘output’文件夹存放Excel文件');
+        dialog.showOpenDialog({properties: ['openDirectory', 'createDirectory']}).then(async (files) => {
+            if (files.filePaths.length > 0) {
+                // 如果有选中
+                filePath = files.filePaths[0];
+                createExcel(filePath);
+            } else {
+                filePath = '';
+                alert('请选择有效的路径');
+            }
+        });
+    };
+    // 解析数据生成Excel 
+    const createExcel = (filePath) => {
+        loading.show();
+        // let fileName = '20200425';
+        let url = `http://localhost:3000/createExcel?filePath=${filePath}`;
+        axios({
+            method: 'get',
+            url: url,
+            responseType: 'stream'
+        }).then(function (response) {
+            loading.hide();
+            let res = response.data;
+            alert(res.data);
+            console.log(response)
+        }).catch(function (error) {
+            alert('当前系统的解析服务有误，请将数据包发送给管理进行解析');
+            loading.hide();
+        });
+    };
+
 
     
     // 下载数据
@@ -204,4 +258,6 @@
     document.getElementById("set-path-btn").addEventListener("click", setPath);
     // 下载woff
     document.getElementById("woff-btn").addEventListener("click", downWoff);
+    // 解析数据生成Excel
+    document.getElementById("create-excel-btn").addEventListener("click", selectFile);
 })();

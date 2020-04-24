@@ -14,52 +14,15 @@
 		/> -->
     <title>Hello World!</title>
 
-    <style>
-        body {
-            overflow: hidden;
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-        }
-
-        .chrome-content {
-            height: 100%;
-            width: 100%;
-            display: none;
-        }
-
-        .hearder-box {
-            padding: 20px;
-        }
-        .btn {
-            display: inline-block;
-            padding: 14px 38px;
-            background: linear-gradient(to right, #4569f4, #1caced);
-            border-radius: 5px;
-            color: #ffffff;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        .btn:hover {
-            opacity: 0.6;
-        }
-        .loading {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            background-color: #ffffff;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="lib/css/main.css" />
 </head>
 
 <body>
     <div class="hearder-box">
         <span id="set-path-btn" class="btn">设置存储路径</span>
         <span id="woff-btn" class="btn">下载woff</span>
-        <span id="back-btn" class="btn">返回</span>
+        <span id="create-excel-btn" class="btn">生成Excel</span>
+        <span id="back-btn" class="btn" style="margin-left: 100px;">返回</span>
         <div>已下载数据量：</div>
         <div>shopList: <span id="shopListLength">0</span></div>
         <div>foodList: <span id="foodListLength">0</span></div>
@@ -69,7 +32,16 @@
     <webview class="chrome-content" src="https://h5.waimai.meituan.com/" id="chrome-content-01" preload="preload.js" style="width: 800px; height: 600px;">
     </webview>
 
-    <div id="loading" class="loading">loading......</div>
+    <div id="loading" class="loading">
+        <div class="loading-background"></div>
+        <div class="loading-gif">
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+        </div>
+    </div>
 
     <!-- <script type="text/javascript">
         window.nodeRequire = require;
